@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wave Calculator</title>
+    
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap"
+    />
+    <style>
+      body {
+        font-family: "Madimi One", sans-serif;
+        margin: 20px;
+        background: url("https://i.pinimg.com/564x/bd/8c/03/bd8c030ec927c6cad58f2d4983ab0bf8.jpg") no-repeat center
+          center fixed;
+        background-size: cover;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        text-align: center;
+        color: #000000;
+        font-family: "Madimi One", sans-serif;
+        margin: 30px;
+      }
+
+      label,
+      p,
+      span {
+        color: #555;
+      }
+
+      #waveData {
+        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      #waveData div {
+        margin-bottom: 15px;
+      }
+
+      input {
+        padding: 8px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        width: 150px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      #result {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        width: 100%;
+      }
+
+      #result > div {
+        flex: 1 1 300px;
+        margin: 10px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        color: #333;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Wave Calculator</h2>
+
+    <div id="waveData">
+      <h3>Wave Data</h3>
+      <div>
+        <label for="waveHeight">Wave Height (meters):</label>
+        <div id="waveHeightInputs"></div>
+      </div>
+
+      <div>
+        <label for="wavePeriod">Wave Period (seconds):</label>
+        <div id="wavePeriodInputs"></div>
+      </div>
+    </div>
+
+    <button onclick="calculateWave()">Calculate</button>
+
+    <div id="result">
+      <div>
+        <h3>Wave Height:</h3>
+        <p>Maximum Wave Height: <span id="maxWaveHeight"></span> meters</p>
+        <p>Minimum Wave Height: <span id="minWaveHeight"></span> meters</p>
+      </div>
+
+      <div>
+        <h3>Wave Period:</h3>
+        <p>Maximum Wave Period: <span id="maxWavePeriod"></span> seconds</p>
+        <p>Minimum Wave Period: <span id="minWavePeriod"></span> seconds</p>
+      </div>
+
+      <div>
+        <h3>Average Wave:</h3>
+        <p>Average Wave Height: <span id="averageWaveHeight"></span> meters</p>
+        <p>Average Wave Period: <span id="averageWavePeriod"></span> seconds</p>
+      </div>
+    </div>
+
+    <script>
+      const numWaveData = 20;
+
+      // Create input fields for wave height and wave period
+      const waveHeightInputs = document.getElementById("waveHeightInputs");
+      const wavePeriodInputs = document.getElementById("wavePeriodInputs");
+
+      for (let i = 1; i <= numWaveData; i++) {
+        const waveHeightInput = document.createElement("input");
+        waveHeightInput.type = "number";
+        waveHeightInput.placeholder = `Enter wave height ${i}`;
+        waveHeightInput.id = `waveHeight${i}`;
+        waveHeightInputs.appendChild(waveHeightInput);
+
+        const wavePeriodInput = document.createElement("input");
+        wavePeriodInput.type = "number";
+        wavePeriodInput.placeholder = `Enter wave period ${i}`;
+        wavePeriodInput.id = `wavePeriod${i}`;
+        wavePeriodInputs.appendChild(wavePeriodInput);
+      }
+
+      function calculateWave() {
+        let maxWaveHeight = Number.MIN_VALUE;
+        let minWaveHeight = Number.MAX_VALUE;
+        let maxWavePeriod = Number.MIN_VALUE;
+        let minWavePeriod = Number.MAX_VALUE;
+        let sumWaveHeight = 0;
+        let sumWavePeriod = 0;
+        let validDataCount = 0;
+
+        for (let i = 1; i <= numWaveData; i++) {
+          const waveHeightInput = document.getElementById(`waveHeight${i}`);
+          const wavePeriodInput = document.getElementById(`wavePeriod${i}`);
+
+          const waveHeightValue = parseFloat(waveHeightInput.value);
+          const wavePeriodValue = parseFloat(wavePeriodInput.value);
+
+          // Check if the input is a valid number
+          if (!isNaN(waveHeightValue) && !isNaN(wavePeriodValue)) {
+            validDataCount++;
+            maxWaveHeight = Math.max(maxWaveHeight, waveHeightValue);
+            minWaveHeight = Math.min(minWaveHeight, waveHeightValue);
+            maxWavePeriod = Math.max(maxWavePeriod, wavePeriodValue);
+            minWavePeriod = Math.min(minWavePeriod, wavePeriodValue);
+            sumWaveHeight += waveHeightValue;
+            sumWavePeriod += wavePeriodValue;
+          }
+        }
+
+        if (validDataCount > 0) {
+          const averageWaveHeight = sumWaveHeight / validDataCount;
+          const averageWavePeriod = sumWavePeriod / validDataCount;
+
+          document.getElementById("maxWaveHeight").innerText =
+            maxWaveHeight.toFixed(2);
+          document.getElementById("minWaveHeight").innerText =
+            minWaveHeight.toFixed(2);
+          document.getElementById("maxWavePeriod").innerText =
+            maxWavePeriod.toFixed(2);
+          document.getElementById("minWavePeriod").innerText =
+            minWavePeriod.toFixed(2);
+          document.getElementById("averageWaveHeight").innerText =
+            averageWaveHeight.toFixed(2);
+          document.getElementById("averageWavePeriod").innerText =
+            averageWavePeriod.toFixed(2);
+        } else {
+          alert(
+            "Please enter valid numeric values in at least one set of wave data."
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
